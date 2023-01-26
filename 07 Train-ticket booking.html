@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: sans-serif Arial;
+        }
+        #form1 {
+            width: 910px;
+            background: rgb(180, 219, 232);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        #form1 select, #date {
+            width: 250px;
+            padding: 5px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin-right: 20px;
+        }
+        #search, #book, #return {
+            width: 200px;
+            padding: 5px;
+        }
+        #chooseSeats {
+            width: 910px;
+            height: 280px;
+            background: rgb(180, 219, 232);
+            padding: 30px;
+        }
+        #waggon {
+            box-sizing: border-box;
+            width: 910px;
+            height: 150px;
+            border: 1px solid grey;
+            border-radius: 10px;
+            margin-top: 40px;
+            padding: 30px 25px;
+        }
+        .coupe {
+            box-sizing: border-box;
+            width: 120px;
+            height: 90px;
+            float: left;
+            margin-right: 2px;
+            border: 2px solid grey;
+            position: relative;
+        }
+        .seats {
+            box-sizing: border-box;
+            width: 56px;
+            height: 40px;
+            border: 1px solid grey;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .bottom-left-place {
+            position: absolute;
+            top: 46px;
+        }
+        .top-right-place {
+            position: absolute;
+            top: 0;
+            left: 60px;
+        }
+        .bottom-right-place {
+            position: absolute;
+            top: 46px;
+            left: 60px;
+        }
+        #total {
+            float: right;
+            padding: 30px;
+        }
+        #price {
+            font-weight: bold;
+        }
+        #my_tickets {
+            width: 910px;
+            padding: 30px;
+            background: rgb(180, 219, 232);
+        }
+        #ticket_table {
+            border-collapse: collapse;
+            font-size: larger;
+        }
+        #ticket_table th, td {
+            border: 1px solid grey;
+            padding: 20px;
+            text-align: center;
+        }
+        #return {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<form action="" id="form1">
+    <label for="direction">Direction:</label>
+    <select id="direction">
+        <option>Voronezh - Moscow</option>
+        <option>Voronezh - Saint-Petersburg</option>
+        <option>Voronezh - Sochi</option>
+        <option>Voronezh - Novosibirsk</option>
+    </select>
+    <label for="date">Date:</label>
+    <input type="date" id="date">
+    <input type="button" id="search" value="Search">
+</form>
+<script>
+    let bookTrain = {
+        priceList: [20, 43, 55, 135],  //прайс-лист билетов
+        soldTickets: [],               //проданные билеты на маршрут
+        choice: [],                    //выбранные сейчас билеты
+        bookingArr: [],                //все купленные билеты
+        counter: 0,
+        index: null,
+        init() {
+            this.getHTMLSelector();
+            this.eventListener()
+        },
+        getHTMLSelector() {
+            this.dir = document.getElementById('direction');                                                //select - направление маршрута
+            this.date = document.getElementById('date');                                                    //input - дата маршрута
+            this.srch = document.getElementById('search');                                                  //кнопка Поиск
+        },
+        eventListener() {                                                                                   //обработчик события "нажатие на Search"
+            this.srch.addEventListener('click', this.searchTickets);
+        },
+        searchTickets() {                                                                                   //метод проверяет выбор даты и запускает 2 других
+            if (!bookTrain.date.value) alert('Choose date');
+            else {
+                bookTrain.index = bookTrain.dir.selectedIndex;                                              //индекс выбранного направления маршрута в select
+                bookTrain.checkSoldTickets();
+                bookTrain.createSeatBlock();
+            }
+        },
+        checkSoldTickets() {                                                                                //метод проверяет купленные ранее на маршрут билеты
+            for (let i=0; i < this.bookingArr.length; i++) {
+                if (this.bookingArr[i][0] === this.dir.children[this.index].innerHTML
+                    && this.bookingArr[i][1] === this.date.value) {                                         //работает только, если совпадает и маршрут, и дата
+                    for (let j = 2; j < this.bookingArr[i].length; j++) {
+                        this.soldTickets.push(this.bookingArr[i][j]);                                       //все купленные места добавляем в массив
+                    }
+                }
+            }
+            console.log(this.soldTickets);                                                                  //для удобства контроля купленных на этот маршрут билетов
+        },
+        createSeatBlock() {                                                                                 //метод добавляет блок для выбора мест
+            if (document.getElementById('chooseSeats') || document.getElementById('my_tickets')) {          //если создан другой блок после блока поиска, а нужен другой,
+                document.body.removeChild(document.body.lastChild);                                         //предварительно удаляем предыдущий блок
+            }
+            this.counter = 0;                                                                               //сбрасываем счетчик выбранных мест
+            let n = document.createElement('div');                                                          //создаем новый элемент HTML
+            let str = '    <hr>\n' +
+                '    <div id="waggon">\n';
+            for (let i = 1; i <= 7; i ++) {                                                                 //7 блоков по 4 блока внутри
+                str += '<div class="coupe">\n' +
+                    '        <div class="seats top-left-place">\n' +
+                    '            <input type="checkbox" id="seat' + (i*4-3) + '">\n' +
+                    '                <label for="seat' + (i*4-3) + '">' + (i*4-3) + '</label>\n' +
+                    '        </div>\n' +
+                    '        <div class="seats bottom-left-place">\n' +
+                    '            <input type="checkbox" id="seat' + (i*4-2) + '">\n' +
+                    '                <label for="seat' + (i*4-2) + '">' + (i*4-2) + '</label>\n' +
+                    '        </div>\n' +
+                    '        <div class="seats top-right-place">\n' +
+                    '            <input type="checkbox" id="seat' + (i*4-1) + '">\n' +
+                    '                <label for="seat' + (i*4-1) + '">' + (i*4-1) + '</label>\n' +
+                    '        </div>\n' +
+                    '        <div class="seats bottom-right-place">\n' +
+                    '            <input type="checkbox" id="seat' + i*4 + '">\n' +
+                    '                <label for="seat' + i*4 + '">' + i*4 + '</label>\n' +
+                    '        </div>\n' +
+                    '    </div>'
+            }
+            str += '    </div>\n' +
+                '    <label for="book" id="total">Total price: <span id="price"></span>\n' +                //блок со стоимостью билетов
+                '        <input type="button" id="book" value="Book">\n' +                                  //и кнопкой "Book"
+                '    </label>\n';
+            n.innerHTML = str;
+            n.setAttribute('id','chooseSeats');
+            document.body.appendChild(n);
+            this.markSoldTickets()
+        },
+        markSoldTickets() {                                                                                 //метод отмечает купленные места
+            this.seats = document.querySelectorAll('.seats');                                               //node-list из всех мест в вагоне
+            for (let i = 0; i < this.soldTickets.length; i++) {                                             //отмечаем проданные ранее места маршрута атрибутом disabled
+                this.seats[(this.soldTickets[i]-1)].children[0].setAttribute('disabled', 'true');           //берем номер купленного места и отмечаем input ребенка seats c индексом (номер-1)
+            }
+            this.soldTickets = [];                                                                          //сбрасываем массив купленных билетов после выполнения метода
+            this.bookEventListener()
+        },
+        bookEventListener() {                                                                               //назначает обработчики событий на кнопку "Book" и на блок "Вагон"
+            document.getElementById('book').addEventListener('click', this.saveBooking);
+            document.getElementById('waggon').addEventListener('click', this.countTotal)
+        },
+        countTotal(e) {
+            bookTrain.price = document.getElementById('price');                                             //span с итоговой стоимостью билетов
+            if (e.target.type === 'checkbox') {                                                             //ловим только те события, которые попали на checkbox
+                if (e.target.checked) {                                                                     //если checkbox отметился галочкой, прибавляем счетчик выбранных мест
+                    bookTrain.counter++;
+                    bookTrain.price.innerHTML = (bookTrain.priceList[bookTrain.index] * bookTrain.counter) + '$';
+                }                                                                                           //берем стоимость билета из прайс-листа на соответствующий маршрут и умножаем на счетчик
+                else {
+                    bookTrain.counter--;                                                                    //если галочка с checkbox снялась, убавляем счетчик выбранных мест
+                    bookTrain.price.innerHTML = (bookTrain.priceList[bookTrain.index] * bookTrain.counter) + '$';
+                }
+            }
+        },
+        saveBooking() {                                                                                     //метод подтверждает и сохраняет бронирование
+            if (!bookTrain.counter) alert('Choose seats');                                                  //на случай, если места вообще не выбраны
+            else {
+                bookTrain.choice = [];                                                                      //обнуляем массив выбранных мест
+                let direction = bookTrain.dir.children[bookTrain.index].innerHTML;                          //направление маршрута
+                bookTrain.choice.push(direction, bookTrain.date.value);
+                bookTrain.seats.forEach(function (elem) {                                                   //проверяем какие места в итоге отмечены, встроенным методом forEach
+                    if (elem.children[0].checked) bookTrain.choice.push(elem.children[1].innerHTML)
+                })                                                                                          //children[0] - в данном случае input типа checkbox, а children[1] - его label
+                bookTrain.bookingArr.push(bookTrain.choice);                                                //добавляем массив купленных мест в общий массив
+                console.log(bookTrain.bookingArr);                                                          //для удобства контроля массива купленных билетов
+                bookTrain.counter = 0;                                                                      //сбрасываем счетчик выбранных билетов
+                document.body.removeChild(document.body.lastChild);                                         //удаляем блок для выбора мест
+                bookTrain.showTickets()
+            }
+        },
+        showTickets() {                                                                                     //метод создает блок для демонстрации купленных билетов
+            let n = document.createElement('div');
+            n.innerHTML = '    <h3>My tickets:</h3>\n' +
+                '    <table id="ticket_table">\n' +
+                '        <thead>\n' +
+                '            <th>Direction</th>\n' +
+                '            <th>Date</th>\n' +
+                '            <th>Seat</th>\n' +
+                '        </thead>\n' +
+                '        <tbody id="tickets">\n' +
+                '        </tbody>\n' +
+                '    </table>' +
+                '    <input type="button" id="return" value="Return">';
+            n.setAttribute('id','my_tickets');
+            document.body.appendChild(n);
+            let arr = this.choice.slice(2);                                                                 //массив только из номеров купленных мест
+            this.tickets = document.getElementById('tickets');                                              //tbody таблицы
+            for (let i = 0; i < arr.length; i++) {
+                let ticketLines = document.createElement('tr');                                             //добавляем в tbody таблицы строки с данными билетов
+                ticketLines.innerHTML = '<td>' + this.dir.children[this.index].innerHTML + '</td>' +        //направление маршрута
+                    '<td>' + this.date.value + '</td>' +                                                    //дата маршрута
+                    '<td>' + arr[i] + '</td>';                                                              //купленное место
+                this.tickets.appendChild(ticketLines);
+            }
+            document.getElementById('return').addEventListener('click', function () {                       //удаляем блок демонстрации билетов при клике на Return
+                document.body.removeChild(document.body.lastChild);
+            })
+        }
+    }
+    bookTrain.init()
+</script>
+</body>
+</html>

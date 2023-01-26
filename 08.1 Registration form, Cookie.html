@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page 1</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #form1 {
+            box-sizing: border-box;
+            background: #b4dbe8;
+            width: 400px;
+            height: 300px;
+            margin: auto;
+            padding: 30px;
+        }
+        #form1_header {
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+        #form1 label {
+            font-weight: bold;
+        }
+        #form1 span {
+            float: right;
+            color: red;
+        }
+        #form1 input {
+            box-sizing: border-box;
+            width: 340px;
+            height: 30px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin: 0 0 10px 0;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body onload="checkReg()">
+<form method="GET" action="" id="form1">
+    <h3 id="form1_header">Registration</h3>
+    <label for="userEmail">Email:</label><span id="incorrect_email"></span>
+    <input type="email" id="userEmail"><br>
+    <label for="password">Password:</label><span id="incorrect_password"></span>
+    <input type="password" id="password"><br>
+    <label for="pass_confirm">Repeat:</label><span id="incorrect_pass_confirm"></span>
+    <input type="password" id="pass_confirm"><br>
+    <input type="button" id="sub_form1" value="Sign Up" onclick="checkForm()"><br>
+</form>
+<script>
+    function checkReg(){
+        let x = document.cookie;
+        let s = x.split('; ');
+        let cookieObject = {};
+        let c;
+        for(let i=0; i < s.length; i++) {
+            c = s[i].split('=');
+            cookieObject[c[0]] = c[1];
+        }
+        if ('registration' in cookieObject) {
+            document.location.href = 'Novikov_DZ_JS_Mod_6_2.html';
+        }
+    }
+    function checkForm(){
+        let counter = 0;
+        let userEmail = document.getElementById('userEmail');
+        let mailSpan = document.getElementById('incorrect_email');
+        let mail = userEmail.value;
+        let t1 = /^\w[\w\-.]{2,}@\w+\.\w+$/
+        if (!t1.test(mail)) {
+            mailSpan.innerText = 'Incorrect email address';
+            counter++
+        }
+        else mailSpan.innerText = ''
+        let password = document.getElementById('password');
+        let pswdSpan = document.getElementById('incorrect_password');
+        let pswd = password.value;
+        if (pswd.length < 6) {
+            pswdSpan.innerText = 'Minimum 6 simbols';
+            counter++
+        }
+        else pswdSpan.innerText = ''
+        if (! /[A-Z]/.test(pswd)) {
+            pswdSpan.innerText = 'Password has no big letters';
+            counter++
+        }
+        if (! /[a-z]/.test(pswd)) {
+            pswdSpan.innerText = 'Password has no small letters';
+            counter++
+        }
+        if (! /\d/.test(pswd)) {
+            pswdSpan.innerText = 'Password has no digit';
+            counter++
+        }
+        let passconf = document.getElementById('pass_confirm');
+        let passconfSpan = document.getElementById('incorrect_pass_confirm');
+        let pswdc = passconf.value;
+        if (pswdc !== pswd) {
+            passconfSpan.innerText = 'Password must match';
+            counter++
+        }
+        else passconfSpan.innerText = ''
+        if (counter > 0) {
+            return false
+        }
+        else {
+            let expDate = new Date;
+            expDate.setTime((new Date).getTime() + 30*60*1000);
+            document.cookie = "registration="+mail+"; expires="+expDate.toUTCString()+"; path=/";
+            checkReg();
+        }
+    }
+</script>
+</body>
+</html>

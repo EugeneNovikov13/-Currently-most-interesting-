@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background: bisque;
+            font-family: sans-serif Arial;
+        }
+        form, div {
+            width: 500px;
+            padding: 30px 30px 0 30px;
+        }
+        #form1 select {
+            width: 100px;
+            margin-right: 30px;
+            padding: 5px;
+        }
+        #but_select {
+            width: 100px;
+            padding: 5px;
+        }
+        #inp3, #topic {
+            width: 400px;
+            padding: 5px 20px;
+            margin-bottom: 30px;
+        }
+        tr td {
+            border-bottom: 1px dotted grey;
+            width: 250px;
+            padding-left: 20px;
+        }
+        #but_save {
+            width: 500px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<form action="" id="form1">
+    <label for="inp1">Group:</label>
+    <select id="inp1">
+        <option value="0">Group 1</option>
+        <option value="1">Group 2</option>
+        <option value="2">Group 3</option>
+    </select>
+    <label for="inp2">Lesson:</label>
+    <select id="inp2">
+        <option value="0">1</option>
+        <option value="1">2</option>
+        <option value="2">3</option>
+    </select>
+    <input type="button" id="but_select" value="Select">
+    <hr>
+</form>
+<div id="tabBlock" hidden></div>
+<script>
+    let classAtt = {
+        attendance: [[[],[],[]],    //единый массив для данных от первой группы, второй и третьей
+                     [[],[],[]],    //первый уровень вложения это группы
+                     [[],[],[]]],   //второй уровень - уроки группы
+        init() {
+            this.getHTMLSelector();
+            this.eventListener()
+        },
+        getHTMLSelector() {
+            this.groupNum = document.getElementById('inp1');
+            this.lesson = document.getElementById('inp2');
+            this.select = document.getElementById('but_select');
+            this.tabBlock = document.getElementById('tabBlock');
+        },
+        eventListener() {
+            this.select.addEventListener('click', this.checkLesson);
+        },
+        checkLesson() {                        //проверяем не был ли уже заполнен выбранный урок для выбранной группы
+            classAtt.gr = classAtt.groupNum.value;
+            classAtt.les = classAtt.lesson.value;
+            if (classAtt.attendance[classAtt.gr][classAtt.les].length > 0) classAtt.showLesson()
+            else classAtt.createNewLesson()    //если соответствующий массив имеет ненулевую длину, то показываем его
+        },                                     //иначе выводим блок для ввода данных
+        showLesson() {
+            this.tabBlock.removeAttribute('hidden');  //удаляем атрибут hidden для tabBlock
+            let arr = classAtt.attendance[this.gr][this.les];
+            let str = '    <p id="topic">Topic:    ' + arr[0] + '</p>\n' +
+                '    <table id="group">\n' +
+                '        <tr>\n' +
+                '            <td>Name</td>\n' +
+                '            <td>Is present</td>\n' +
+                '        </tr>\n';
+            for (let i = 1; i < arr.length; i++) {
+                str += '        <tr>\n' +
+                '            <td>Student ' + i + '</td>\n' +
+                '            <td>' + arr[i] + '</td>\n' +
+                '        </tr>\n';
+                if (i === 9) {
+                    str += '    </table>\n';   //формируем текст HTML блока tabBlock, заполняя его данными из
+                }                              //соответствующего массива
+            }
+            this.tabBlock.innerHTML = str;
+        },
+        createNewLesson() {
+            this.tabBlock.removeAttribute('hidden');             //удаляем атрибут hidden для tabBlock
+            let str = '    <label for="inp3">Topic:</label>\n' +
+                '    <input type="text" id="inp3">' +
+                '    <table id="group">\n' +
+                '        <tr>\n' +                               //формируем текст HTML блока tabBlock
+                '            <td>Name</td>\n' +
+                '            <td>Is present</td>\n' +
+                '        </tr>\n';
+            for (let i = 1; i < 10; i++) {
+                str += '        <tr>\n' +
+                '            <td>Student ' + i + '</td>\n' +
+                '            <td><input type="checkbox"></td>\n' +
+                '        </tr>\n';
+                if (i === 9) {
+                    str += '    </table>\n' +
+                '    <input type="button" id="but_save" value="Save">';
+                }
+            }
+            this.tabBlock.innerHTML = str;
+            this.save = document.getElementById('but_save');
+            this.topic = document.getElementById('inp3');
+            this.group = document.querySelectorAll('#group tr');    //HTML-коллекция строк таблицы tr
+            this.save.addEventListener('click', this.saveNewLesson) //обработчик события - клик на созданную кнопку Save
+        },
+        saveNewLesson() {
+            if (!classAtt.topic.value) {                            //проверяем, что была введена тема урока
+                classAtt.topic.placeholder = 'Enter theme of lesson in Topic!!!'
+            }
+            else {
+                let arr = [];                       //заполняем промежуточный массив введенными данными
+                arr[0] = classAtt.topic.value;
+                for (let i = 1; i < classAtt.group.length; i++) {
+                    if (classAtt.group[i].children[1].children[0].checked) arr[i] = 'present';
+                    else arr[i] = '';  //HTML-коллекция строк таблицы tr/
+                }
+                classAtt.attendance[classAtt.gr][classAtt.les] = arr;
+                classAtt.tabBlock.setAttribute('hidden', 'true');
+                console.log(classAtt.attendance)
+                classAtt.init();
+            }
+        }
+    }
+    classAtt.init()
+</script>
+</body>
+</html>

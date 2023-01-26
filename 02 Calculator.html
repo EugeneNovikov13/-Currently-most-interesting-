@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <style>
+        #screen {
+            width: 292px;
+            height: 73px;
+            border: 1px solid grey;
+            margin-bottom: 20px;
+            text-align: right;
+            box-sizing: border-box;
+            font-family: sans-serif;
+            font-size: 35px;
+            padding: 19px;
+            overflow: hidden;
+        }
+        #buttons {
+            border-collapse: collapse;
+        }
+        #buttons td {
+            width: 70px;
+            height: 70px;
+            border: 1px solid grey;
+            text-align: center;
+            font-family: sans-serif;
+            font-size: 35px;
+        }
+
+    </style>
+</head>
+<body>
+<!--*** Задачка со звездочкой))-->
+<!--Создать html-страницу «Калькулятор». Реализовать его функциональность.-->
+
+<div id="screen"></div>
+<table id="buttons">
+    <tr>
+        <td>7</td>
+        <td>8</td>
+        <td>9</td>
+        <td>+</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>5</td>
+        <td>6</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+        <td>*</td>
+    </tr>
+    <tr>
+        <td>C</td>
+        <td>0</td>
+        <td>=</td>
+        <td>/</td>
+    </tr>
+</table>
+<script>
+    let calculator = {
+        resultScr: null,
+        calcTable: null,
+        num: '',
+        but: '',
+        act: '',
+        res: null,
+        arrNum: [],
+        init: function() {
+            this.setVarForHTMLSelector();
+            this.eventListener();
+        },
+        eventListener: function() {
+            this.calcTable.addEventListener('click', this.getButtonData);
+        },
+        setVarForHTMLSelector: function() {
+            this.resultScr = document.querySelector('#screen');
+            this.calcTable = document.querySelector('#buttons');
+        },
+        getButtonData: function(e) {      //принимает значение кнопки и выбирает соотвествующий метод для его обработки
+            this.but = e.target.innerText;
+            const reg = /\d/;
+            calculator.actionAfterCalculation();
+            if (this.but === 'C') calculator.reset();
+            if (reg.test(this.but)) calculator.enterNumbers(this.but);
+            if (this.but === '+' || this.but === '-' || this.but === '*' || this.but === '/')
+                calculator.actionButtons(this.but);
+            if (this.but === '=') calculator.calculation();
+        },
+        enterNumbers: function(but) {
+            this.num += but;                                             //добавляет цифру в число
+            this.resultScr.innerText = this.resultScr.innerText + but;   //добавляет цифру на табло
+        },
+        actionButtons: function(but) {
+            if (this.act !== '') {                       //проверяет не был ли раньше введен знак действия
+                if (this.num !== '') this.calculation(); //на случай, если введен знак действия после ввода обоих чисел
+                else {                                   //стирает прежний знак действия и назначает новый
+                    this.resultScr.innerText = this.resultScr.innerText.substring(0,this.resultScr.innerText.length-1);
+                    this.act = but;
+                    this.resultScr.innerText +=but;
+                }
+            }
+            else {
+                this.act = but;                          //добавляет знак действия, если до этого его не было
+                this.resultScr.innerText += but;
+                if (this.num !== '') {                   //заносит первое число в массив с индексом 0
+                    this.arrNum[0] = +this.num;
+                    this.num = '';
+                }
+                else this.resultScr.innerText = this.arrNum[0] + but;
+            }                             //иначе выводим на табло текущее значение из массива (предыдущий результат)
+        },
+        calculation: function() {
+            this.arrNum.push(+this.num);                  //заносим в массив второе число с индексом 1
+            switch (this.act) {                           //проверяем какое действие нужно совершить с числами
+                case '+':
+                    this.res = this.arrNum[0]+this.arrNum[1];
+                    break;
+                case '-':
+                    this.res = this.arrNum[0]-this.arrNum[1];
+                    break;
+                case '*':
+                    this.res = this.arrNum[0]*this.arrNum[1];
+                    break;
+                case '/':
+                    this.res = this.arrNum[0]/this.arrNum[1];
+                    break;
+                default : this.res = this.num;            //если знак действия не был введен
+            }
+            this.resultScr.innerText += '=' + this.res;   //если ответ превышает 15 знаков, выводится только результат
+            if (this.resultScr.innerText.length>14) this.resultScr.innerText = this.res;
+        },
+        actionAfterCalculation: function () {
+            if (this.res !== null) {                       //сбрасывает переменные после получения результата
+                this.reset();
+                this.arrNum.push(this.res); //заносит результат в массив с индексом 0, если мы хотим использовать
+            }                               //результат для дальнейших вычислений
+            this.res = null;
+        },
+        reset: function() {                                 //осуществляет сброс по факту запросу метода
+            this.resultScr.innerText = '';
+            this.num = '';
+            this.arrNum = [];
+            this.act = '';
+        }
+    }
+    calculator.init();
+</script>
+</body>
+</html>

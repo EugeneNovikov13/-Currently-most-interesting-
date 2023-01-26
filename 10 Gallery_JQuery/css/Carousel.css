@@ -1,0 +1,40 @@
+/*СТИЛИ ДОБАВЛЕННЫХ ЭЛЕМЕНТОВ*/
+.gallery {
+    margin: auto;
+    box-shadow: 0 0 10px cadetblue;
+    padding: 5px;
+}
+.owl-nav img {
+    width: 20px;
+    height: 20px;
+}
+.full-screen {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.full-screen img {
+    width: 40px;
+    height: 40px;
+}
+/*КАСТОМИЗАЦИЯ ВСТРОЕННЫХ В ПЛАГИН ЭЛЕМЕНТОВ*/
+#customers-gallery .owl-dots {
+    margin-top: 4px;
+    height: 20px;
+    position: relative;
+    top: -50px;
+}
+#customers-gallery .owl-nav {
+    margin-top: 0;
+    position: relative;
+    top: 25px;
+}
+#customers-gallery .owl-nav button {
+    width: 40px;
+    height: 40px;
+    padding: 7px !important;
+    border-radius: 50%;
+    border: 3px solid cornflowerblue;
+    background: white;
+}
+

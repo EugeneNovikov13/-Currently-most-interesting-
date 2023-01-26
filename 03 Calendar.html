@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div {
+            margin: auto;
+            width: 400px;
+        }
+        [type = "text"] {
+            width: 80px;
+            margin-right: 30px;
+        }
+        #but {
+            width: 300px;
+        }
+        table {
+            width: 280px;
+            height: 140px;
+            border-collapse: collapse;
+        }
+        th, td {
+            width: 40px;
+            height: 20px;
+            border: 1px solid grey;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form id="form1">
+        <label for="month">Month:</label>
+        <input type="text" id="month">
+        <label for="year">Year:</label>
+        <input type="text" id="year"><br>
+        <p><input type="button" id="but" value="Generate"></p>
+    </form>
+    <h4>Month, year</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>MON</th>
+                <th>TUE</th>
+                <th>WED</th>
+                <th>THU</th>
+                <th>FRI</th>
+                <th>SAT</th>
+                <th>SUN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    let calendar = {
+        month: null,
+        year: null,
+        but: null,
+        tabHead: null,
+        tab: null,
+        frm: null,
+        arr: ['January','February','March','April','May','June','July',
+              'August','September','October','November','December'],
+        init: function () {
+            this.setHTMLNodes();
+            this.eventListener();
+        },
+        setHTMLNodes: function () {
+            this.month = document.getElementById('month');
+            this.year = document.getElementById('year');
+            this.but = document.getElementById('but');
+            this.tabHead = document.querySelector('h4');
+            this.tab = document.querySelectorAll('tbody td');
+            this.frm = document.getElementById('form1');
+        },
+        eventListener: function () {
+            this.but.addEventListener('click', this.clickFunc);
+        },
+        clickFunc: function () {
+            calendar.tabReset();
+            calendar.tabHeadPrint();
+            calendar.tabFill();
+            calendar.frm.reset();
+        },
+        tabReset: function () {
+            for (let elem of this.tab) {
+                elem.innerText = '';
+            }
+        },
+        tabHeadPrint: function () {
+            let n = this.month.value;
+            this.tabHead.innerText = this.arr[n-1] + ', ' + this.year.value;
+        },
+        tabFill: function () {
+            let y = this.year.value;
+            let m = this.month.value;
+            let date = new Date(y + '-' + m + '-01');
+            let firstweekday = date.getDay();
+            if (firstweekday === 0) firstweekday = 7;
+            let daysInMonth = new Date(y, m, 0).getDate();
+            for (let i=1; i <= daysInMonth; i++) {
+                this.tab[firstweekday-1].innerText = i;
+                firstweekday++;
+            }
+        }
+    }
+    calendar.init();
+</script>
+</body>
+</html>

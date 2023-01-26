@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background: antiquewhite;
+            font-family: sans-serif;
+        }
+        .books {
+            float: left;
+            width: 140px;
+            height: 300px;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid grey;
+            box-sizing: border-box;
+        }
+        #form_container {
+            float: left;
+            width: 300px;
+            height: 300px;
+            padding: 20px;
+            margin: 10px;
+            border: 1px solid grey;
+            box-sizing: border-box;
+        }
+        .book_name {
+            font-size: 10px;
+            font-weight: bold;
+            text-align: left;
+            line-height: 15px;
+            height: 60px;
+        }
+        .book_author {
+            font-size: 8px;
+            display: inline-block;
+            float: left;
+            line-height: 15px;
+        }
+        .book_price {
+            font-weight: bold;
+            display: inline-block;
+            float: right;
+        }
+        .book_select {
+            width: 120px;
+            height: 20px;
+            background: lightgrey;
+            border: 1px solid grey;
+            margin-top: 10px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        #form1 {
+            height: 240px;
+        }
+        #form1 label {
+            font-size: 12px;
+            line-height: 21px;
+            width: 100px;
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+        #form1 input {
+            width: 145px;
+            height: 15px;
+            border: 1px solid grey;
+            display: inline-block;
+            margin-bottom: 2px;
+            font-size: 10px;
+        }
+        #form1 textarea {
+            width: 145px;
+            height: 63px;
+            border: 1px solid grey;
+            display: inline-block;
+            margin-bottom: 4px;
+            vertical-align: -58px;
+            font-size: 10px;
+        }
+        #sub {
+            width: 260px;
+            height: 20px;
+            background: lightgrey;
+            border: 1px solid grey;
+            font-size: 9px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="book_block">
+    <div class="books">
+        <img src="img/img1.png" alt="book1" width="120px">
+        <div class="book_name">Learning JavaScript: JavaScript Essentials for Modern Application Development</div>
+        <div class="book_author">Ethan Brown</div>
+        <div class="book_price">16$</div>
+        <input type="button" id="book1" class="book_select" value="Select">
+    </div>
+    <div class="books">
+        <img src="img/img2.png" alt="book2" width="120px">
+        <div class="book_name">You Don't Know JS: Scope & Closures</div>
+        <div class="book_author">Kyle Simpson</div>
+        <div class="book_price">20$</div>
+        <input type="button" id="book2" class="book_select" value="Select">
+    </div>
+    <div class="books">
+        <img src="img/img3.png" alt="book3" width="120px">
+        <div class="book_name">JavaScript and JQuery: Interactive Front-End Web Development</div>
+        <div class="book_author">Jon Duckett</div>
+        <div class="book_price">22$</div>
+        <input type="button" id="book3" class="book_select" value="Select">
+    </div>
+</div>
+<div id="form_container">
+    <form action="" id="form1">
+        <label for="inp1">Book:</label>
+        <input type="text" id="inp1" disabled required>
+        <label for="inp2">Quantity:</label>
+        <input type="number" id="inp2" required>
+        <label for="inp3">Name:</label>
+        <input type="text" id="inp3" required>
+        <label for="inp4">Delivery address:</label>
+        <textarea id="inp4" required></textarea>
+        <label for="inp5">Delivery date:</label>
+        <input type="date" id="inp5" required>
+        <label for="inp6">Comment:</label>
+        <textarea id="inp6"></textarea>
+    </form>
+        <input type="button" id="sub" form="form1" value="Buy">
+</div>
+<script>
+    let bookShop = {
+        init () {
+            this.getHTMLSelector();
+            this.eventListener()
+        },
+        getHTMLSelector() {
+            this.book = document.getElementById('book_block');
+            this.bookName = document.getElementById('inp1');
+            this.userName = document.getElementById('inp3');
+            this.deliveryAdrress = document.getElementById('inp4');
+            this.deliveryDate = document.getElementById('inp5');
+            this.buy = document.getElementById('sub');
+        },
+        eventListener() {
+            this.book.addEventListener('click', this.selectChooseFunc);
+            this.buy.addEventListener('click', this.buyFunc)
+        },
+        selectChooseFunc (e) {
+            if (e.target.className === 'book_select') bookShop.bookChooseFunc(e);
+        },
+        bookChooseFunc(e) {
+            let parent = e.target.closest('div');
+            this.bookName.value = parent.children[1].innerHTML;
+        },
+        buyFunc() {
+            document.body.innerHTML = '<h4>Result:</h4>\n' +
+                '<div id="result">\n' +
+                '    <p>' + bookShop.userName.value + ', thanks for the order!</p>\n' +
+                '    <p>Book "' + bookShop.bookName.value + '" will be delivered on ' + bookShop.deliveryDate.value +
+                ' to ' + bookShop.deliveryAdrress.value + '.</p>\n' +
+                '</div>';
+            let res = document.getElementById('result');
+            res.style.cssText = `border: 1px solid grey; padding: 10px; width: 600px;`
+        }
+    }
+    bookShop.init()
+</script>
+</body>
+</html>

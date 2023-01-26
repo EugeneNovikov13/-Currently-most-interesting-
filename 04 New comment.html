@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #comBlock {
+            width: 800px;
+            margin: auto;
+        }
+        .comment {
+            border: 1px solid grey;
+            margin-top: 10px;
+        }
+        .nameBlock {
+            float: left;
+            padding: 5px 10px;
+        }
+        .dateBlock {
+            float: right;
+            padding: 5px 10px;
+        }
+        .mesBlock {
+            clear: both;
+            border-top: 1px solid grey;
+            padding: 10px;
+        }
+        #add {
+            text-align: center;
+            margin: 10px;
+        }
+        #form1 {
+            width: 800px;
+            margin: auto;
+        }
+        #userName {
+            float: right;
+            width: 680px;
+            margin-bottom: 10px;
+            border: 1px solid grey;
+        }
+        #userMessage {
+            float: right;
+            width: 680px;
+            min-height: 50px;
+            margin-bottom: 10px;
+        }
+        label {
+            float: left;
+            margin-bottom: 10px;
+        }
+        #button {
+            clear: both;
+            width: 800px;
+            background: lightgrey;
+            border: 1px solid grey;
+        }
+        input, textarea {
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+<div id="comBlock">
+    <div class="comment">
+        <div class="nameBlock">Name</div>
+        <div class="dateBlock">02.12.2022, 23:12:00</div>
+        <div class="mesBlock">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+        </div>
+    </div>
+</div>
+<p id="add">Add new message:</p>
+<form action="" id="form1">
+    <label for="userName">Your name:</label>
+    <input type="text" id="userName" name="usName"><br>
+    <label for="userMessage">Your message:</label>
+    <textarea name="usMessage" id="userMessage"></textarea>
+    <input type="button" id="button" value="Send">
+</form>
+<script>
+    (function (blockID) {
+        let newMessage = {
+            date: new Date(),
+            init: function () {
+                this.getHTMLText();
+                this.eventListener();
+            },
+            getHTMLText: function () {
+                this.com = document.querySelector(blockID);
+                this.uname = document.forms[0].userName;
+                this.uMes = document.forms[0].userMessage;
+                this.but = document.forms[0].button;
+            },
+            eventListener: function () {
+                this.but.addEventListener('click', this.clickFunc)
+            },
+            clickFunc: function () {
+                newMessage.addMessage();
+                newMessage.resetForm();
+            },
+            addMessage: function () {
+                this.date = this.date.toLocaleString();
+                let nextMessage = document.createElement('div');
+                if (!this.uname.value || !this.uMes.value) {
+                    alert('Enter your name and message');
+                    return;
+                }
+                nextMessage.innerHTML = '<div class="nameBlock">' + this.uname.value + '</div>\n' +
+                                        '    <div class="dateBlock">' + this.date + '</div>\n' +
+                                        '    <div class="mesBlock">' + this.uMes.value + '</div>';
+                nextMessage.classList.add('comment');
+                this.com.appendChild(nextMessage);
+            },
+            resetForm: function () {
+                this.uname.value = '';
+                this.uMes.value = '';
+            }
+        }
+        newMessage.init();
+    })('#comBlock');
+</script>
+</body>
+</html>

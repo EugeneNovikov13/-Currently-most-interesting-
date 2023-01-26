@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page 2</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #form1 {
+            box-sizing: border-box;
+            background: #b4dbe8;
+            width: 600px;
+            height: 340px;
+            margin: auto;
+            padding: 10px 30px;
+        }
+        #form1_hello {
+            text-align: right;
+            margin: 0;
+        }
+        #form1_header {
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+        #form1_left_block {
+            width: 250px;
+            float: left;
+            margin-right: 40px;
+        }
+        #form1_right_block {
+            width: 250px;
+            float: right;
+        }
+        #form1 label {
+            font-weight: bold;
+        }
+        #form1_left_block input {
+            box-sizing: border-box;
+            width: 250px;
+            height: 30px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin: 0 0 10px 0;
+            padding-left: 10px;
+        }
+        #form1_right_block input {
+            box-sizing: border-box;
+            width: 250px;
+            height: 30px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin: 0 0 10px 0;
+            padding-left: 10px;
+        }
+        #form1_right_block select {
+            box-sizing: border-box;
+            width: 250px;
+            height: 30px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin: 0 0 10px 0;
+            padding-left: 10px;
+        }
+        #form1_left_block span {
+            float: right;
+            color: red;
+        }
+        #form1_right_block span {
+            float: right;
+            color: red;
+        }
+        #sub_form1, #clean {
+            box-sizing: border-box;
+            width: 540px;
+            height: 30px;
+            border: 1px solid grey;
+            border-radius: 3px;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body onload="page2.checkReg()">
+<form action="" id="form1">
+    <h5 id="form1_hello">Hello,&nbsp;<span id="userEmail"></span>!&nbsp;<a href="" id="exit" onclick="page2.exitFunc()">exit</a></h5>
+    <hr>
+    <h3 id="form1_header">User info</h3>
+    <div id="form1_left_block">
+        <label for="userFirstName">First Name:</label><span id="incorrect_first_name"></span>
+        <input type="text" id="userFirstName" placeholder="only letters [2-20]">
+        <label for="userBirthYear">Year of birth:</label><span id="incorrect_birth_year"></span>
+        <input type="text" id="userBirthYear" placeholder="from 1900 year">
+        <label for="userPhoneNumber">Phone number:</label><span id="incorrect_phone_number"></span>
+        <input type="tel" id="userPhoneNumber" placeholder="only 10-12 digits + simbols">
+    </div>
+    <div id="form1_right_block">
+        <label for="userLastName">Last Name:</label><span id="incorrect_last_name"></span>
+        <input type="text" id="userLastName" placeholder="only letters [2-20]">
+        <label for="userGender">Gender:</label>
+        <select id="userGender">
+            <option>male</option>
+            <option>female</option>
+        </select>
+        <label for="userSkype">Skype:</label><span id="incorrect_skype"></span>
+        <input type="text" id="userSkype" placeholder="letters.-numbers">
+    </div>
+    <input type="button" id="sub_form1" value="Save" onclick="page2.checkForm()">
+    <input type="button" id="clean" value="Clean" onclick="page2.cleanCookie()">
+</form>
+<script>
+    let page2 = {
+        umail: document.getElementById('userEmail'),
+        cookieObject: {},
+        counter: 0,
+        name: document.getElementById('userFirstName'),
+        last: document.getElementById('userLastName'),
+        by: document.getElementById('userBirthYear'),
+        gen: document.getElementById('userGender'),
+        num: document.getElementById('userPhoneNumber'),
+        sk: document.getElementById('userSkype'),
+        checkReg() {
+            console.log(document.cookie);
+            let s = document.cookie.split('; ');
+            let c;
+            for (let i = 0; i < s.length; i++) {
+                c = s[i].split('=');
+                this.cookieObject[c[0]] = c[1];
+            }
+            if ('registration' in this.cookieObject) {
+                this.umail.innerText = this.cookieObject.registration;
+            }
+            else document.location.href = 'Novikov_DZ_JS_Mod_6_1.html';
+            if ('firstname' in this.cookieObject) this.name.value = this.cookieObject.firstname;
+            if ('lastname' in this.cookieObject) this.last.value = this.cookieObject.lastname;
+            if ('birthyear' in this.cookieObject) this.by.value = this.cookieObject.birthyear;
+            if ('gender' in this.cookieObject) this.gen.value = this.cookieObject.gender;
+            if ('phone' in this.cookieObject) this.num.value = this.cookieObject.phone;
+            if ('skype' in this.cookieObject) this.sk.value = this.cookieObject.skype;
+        },
+        exitFunc() {
+            let expDate = new Date;
+            expDate.setTime((new Date).getTime() - 60 * 1000);
+            document.cookie = "registration=" + this.umail.value + "; expires=" + expDate.toUTCString() + "; path=/";
+        },
+        checkForm() {
+            this.counter = 0;
+            this.checkFirstName();
+            this.checkLastName();
+            this.checkBirthYear();
+            this.checkPhone();
+            this.checkSkype();
+            this.saveCookie();
+        },
+        checkFirstName() {
+            let fnameSpan = document.getElementById('incorrect_first_name');
+            let t1 = /^[A-Z][a-z]{1,19}/;
+            if (!t1.test(this.name.value)) {
+                fnameSpan.innerText = 'Incorrect first name';
+                this.counter++;
+            }
+            else fnameSpan.innerText = '';
+        },
+        checkLastName() {
+            let lnameSpan = document.getElementById('incorrect_last_name');
+            let t1 = /^[A-Z][a-z]{1,19}/;
+            if (!t1.test(this.last.value)) {
+                lnameSpan.innerText = 'Incorrect last name';
+                this.counter++;
+            }
+            else lnameSpan.innerText = '';
+        },
+        checkBirthYear() {
+            let yearSpan = document.getElementById('incorrect_birth_year');
+            let y = new Date().getFullYear();
+            let t2 = /\d{4}/;
+            if (!t2.test(this.by.value) || +this.by.value < 1900 || +this.by.value > y) {
+                yearSpan.innerText = 'Incorrect birth-year';
+                this.counter++;
+            }
+            else yearSpan.innerText = '';
+        },
+        checkPhone() {
+            let telSpan = document.getElementById('incorrect_phone_number');
+            if (this.num.value) {
+                let numClean = this.num.value.replace(/[-() ]/g, "");
+                let t3 = /^(\d{1,3}[\- ]?)?(\(?\d{3,5}\)?[\- ]?)?[\d\- ]{5,10}$/;
+                if (!t3.test(this.num.value) || numClean.length < 10 || numClean.length > 12) {
+                    telSpan.innerText = 'Incorrect number';
+                    this.counter++;
+                }
+                else {
+                    telSpan.innerText = '';
+                    this.num.value = numClean;
+                }
+            }
+            else telSpan.innerText = '';
+        },
+        checkSkype() {
+            let skypeSpan = document.getElementById('incorrect_skype');
+            if (this.sk.value) {
+                let t4 = /[^a-z0-9\-.]/i;
+                if (!t4.test(this.sk.value)) skypeSpan.innerText = '';
+                else {
+                    skypeSpan.innerText = 'Incorrect skype';
+                    this.counter++;
+                }
+            }
+            else skypeSpan.innerText = '';
+        },
+        saveCookie() {
+            if (this.counter === 0) {
+                let expDate = new Date;
+                expDate.setTime((new Date).getTime() + 30*60*1000);
+                document.cookie = "firstname="+ this.name.value +"; expires="+expDate.toUTCString()+"; path=/";
+                document.cookie = "lastname="+ this.last.value +"; expires="+expDate.toUTCString()+"; path=/";
+                document.cookie = "birthyear="+ this.by.value +"; expires="+expDate.toUTCString()+"; path=/";
+                document.cookie = "gender="+ this.gen.value +"; expires="+expDate.toUTCString()+"; path=/";
+                document.cookie = "phone="+ this.num.value +"; expires="+expDate.toUTCString()+"; path=/";
+                document.cookie = "skype="+ this.sk.value +"; expires="+expDate.toUTCString()+"; path=/";
+            }
+            this.checkReg()
+        },
+        cleanCookie() {
+            let expDate = new Date;
+            expDate.setTime((new Date).getTime() - 60 * 1000);
+            document.cookie = "firstname="+ this.name.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.cookie = "lastname="+ this.last.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.cookie = "birthyear="+ this.by.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.cookie = "gender="+ this.gen.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.cookie = "phone="+ this.num.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.cookie = "skype="+ this.sk.value +"; expires="+expDate.toUTCString()+"; path=/";
+            document.location.reload()
+        }
+    }
+</script>
+</body>
+</html>

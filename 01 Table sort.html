@@ -1,0 +1,172 @@
+<!--// 4.*** Задачка со звездочкой))-->
+<!--// Создать html-страницу с большой таблицей. При клике по заголовку колонки, необходимо отсортировать данные по этой-->
+<!--// колонке. Например: на скриншоте люди отсортированы по возрасту. Учтите, что числовые значения должны-->
+<!--// сортироваться как числа, а не как строки, а строковые по алфавиту.-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            width: 100px;
+            height: 30px;
+            border: 1px solid black;
+        }
+        th {
+            background: slategrey;
+        }
+        th:hover {
+            background: #5a5454;
+        }
+    </style>
+</head>
+<body>
+<h1>Barcelona football team</h1>
+<table id="table_sort">
+    <thead id="headers">
+        <tr>
+            <th>Number</th>
+            <th>Player</th>
+            <th>Nationality</th>
+            <th>Age</th>
+            <th>Position</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Ter Stegen</td>
+            <td>Germany</td>
+            <td>30</td>
+            <td>Goalkeeper</td>
+        </tr>
+        <tr>
+            <td>28</td>
+            <td>Balde</td>
+            <td>Spain</td>
+            <td>19</td>
+            <td>Defender</td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td>Alba</td>
+            <td>Spain</td>
+            <td>33</td>
+            <td>Defender</td>
+        </tr>
+        <tr>
+            <td>23</td>
+            <td>Kounde</td>
+            <td>France</td>
+            <td>24</td>
+            <td>Defender</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Araujo</td>
+            <td>Uruguay</td>
+            <td>23</td>
+            <td>Defender</td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>DeJong</td>
+            <td>Holland</td>
+            <td>25</td>
+            <td>Midfielder</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>Pedri</td>
+            <td>Spain</td>
+            <td>19</td>
+            <td>Midfielder</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Gavi</td>
+            <td>Spain</td>
+            <td>18</td>
+            <td>Midfielder</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>Dembele</td>
+            <td>France</td>
+            <td>25</td>
+            <td>Forward</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>Ferran</td>
+            <td>Spain</td>
+            <td>22</td>
+            <td>Forward</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>Lewandowski</td>
+            <td>Poland</td>
+            <td>34</td>
+            <td>Striker</td>
+        </tr>
+    </tbody>
+</table>
+<script>
+    let hdr = document.querySelector('#headers');                   //переменная для доступа к селектору headers
+    hdr.addEventListener('click', function(e){
+        let headTable = document.querySelector('#headers');         //переменная для доступа к head таблицы по его атрибуту id
+
+        let headTableRows = headTable.querySelectorAll('thead th');  //коллекция для доступа к строкам thead таблицы
+
+        let sortTable = document.querySelector('#table_sort');       //переменная для доступа к таблице по ее атрибуту id
+
+        let sortTableRows = sortTable.querySelectorAll('tbody tr');  //коллекция для доступа к строкам tbody таблицы
+
+        let arrTable = [];                                           //объявляем пустой массив и заносим в него данные из таблицы
+        for (let i=0; i<sortTableRows.length; i++){
+            let objRow = {};                                         //заносим данные в виде объектов, где name - это заголовок колонки, а значение это
+            for (let j=0; j<headTableRows.length; j++) {             //строка из соответствующей ячейки tbody
+                objRow[`${headTableRows[j].innerText}`] = `${sortTableRows[i].children[j].innerText}`
+                }
+            arrTable.push(objRow);
+        }
+
+        let sortCol = e.target.innerText;                            //объявляем переменную, соответствующую названию нажатой колонки
+
+        let mapArrTable = arrTable.map(function (el,i) {             //выбираем нужные значения для сортировки в новый массив с помощью метода map
+            if (Number(arrTable[0][sortCol]) == arrTable[0][sortCol]) {el = Number(arrTable[i][sortCol])} //проверяем содержат ли наши значения числа
+            else el = arrTable[i][sortCol];
+            return {index: i, value: el};                            //метод возвращает значение поля sortCol объекта вместе с индексом объекта в массиве
+        });
+
+        //сортируем полученный массив по возрастанию методом sort
+        mapArrTable.sort(function(a, b) {
+            if (a.value > b.value) {
+                return 1; }
+            if (a.value < b.value) {
+                return -1; }
+            return 0;
+        });
+
+        //возвращаем упорядоченный массив обратно в исходный, присваивая при этом объектам в массиве нужный индекс
+        arrTable = mapArrTable.map(function (el) {
+            return arrTable[el.index];
+        });
+
+        //заносим данные обратно в таблицу
+        let col;
+        for(let i=0; i<arrTable.length; i++){
+            for (let j=0; j<headTableRows.length; j++) {
+                col = `${headTableRows[j].innerText}`;
+                sortTableRows[i].children[j].innerText = arrTable[i][col];
+            }
+        }
+    });
+</script>
+</body>
+</html>
